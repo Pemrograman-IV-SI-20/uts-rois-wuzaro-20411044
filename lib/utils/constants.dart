@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:progress_dialog/progress_dialog.dart';
  
 import '../size_config.dart';
+ProgressDialog? pr;
  
-const kPrimaryColor = Color(0xFF1DB9C3);
-const kSecondaryColor = Color(0xFF398AB9);
+const kPrimaryColor = Color.fromARGB(255, 95, 20, 20);
+const kSecondaryColor = Color.fromARGB(255, 93, 9, 9);
 const kThirdColor = Color(0xFFD8D2CB);
 const kFourthColor = Color(0xFFEEEEEE);
 const kPrimaryLightColor = Color(0xFFFFECDF);
 const kColorTeal = Color(0xFF008080);
 const kColorTealSlow = Color(0xFF159897);
 const kColorTealToSlow = Color(0xFF03c0c1);
-const kColorBlue = Color(0xFF3EB2FF);
+const kColorBlue = Color.fromARGB(255, 5, 30, 47);
 const kColorGreen = Color(0xFF00FCA6);
 const kColorRedSlow = Color(0xFFf55f60);
 const kColorYellow = Color(0xFFFFC654);
@@ -244,4 +246,17 @@ class HexColor extends Color {
 class AlwaysDisabledFocusNode extends FocusNode {
   @override
   bool get hasFocus => false;
+}
+
+class utilsApps {
+
+  static void showDialog (BuildContext context){
+    pr = new ProgressDialog(context);
+    pr!.show();
+  }
+
+  static void hideDialog (BuildContext context){
+    pr = new ProgressDialog(context);
+    pr!.hide();
+  }
 }

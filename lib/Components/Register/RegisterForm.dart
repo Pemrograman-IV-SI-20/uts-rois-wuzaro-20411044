@@ -1,110 +1,211 @@
-import 'dart:js';
-
-import 'package:flutter/cupertino.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-//import 'package:toko_gitar_flutter/Components/Register/Registrasi.dart';
+import 'package:toko_gitar_flutter/API/ConfigUrl.dart';
 import 'package:toko_gitar_flutter/Components/custom_surfix_icon.dart';
 import 'package:toko_gitar_flutter/Components/default_button_custome_color.dart';
-import 'package:toko_gitar_flutter/Screens/Register/RegisterScreens.dart';
-import 'package:toko_gitar_flutter/Utils/constants.dart';
+import 'package:toko_gitar_flutter/Screens/Login/LoginScreens.dart';
 import 'package:toko_gitar_flutter/size_config.dart';
+import 'package:toko_gitar_flutter/utils/constants.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
-class SignInform extends StatefulWidget{
-@override
- _SignInform createState() => _SignInform();
-}
+class SignUpform extends StatefulWidget {
   @override 
-  class _SignInform extends State<SignInform>{
+  _SignUpform createState() => _SignUpform();
+}
 
-    final _formkey = GlobalKey<FormState>();
-    String?  username;
-    String? Password;
-    bool? remeber =false;
+class _SignUpform extends State<SignUpform> {
 
-    TextEditingController txtUsserName = TextEditingController(),
-    txtPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  String? namalengkap;
+  String? username;
+  String? email;
+  String? password;
+  bool? remeber = false;
 
-    FocusNode focusNode = FocusNode();
-  
-  Widget build (BuildContext context){
+  Response? response;
+  var dio = Dio();
+
+  TextEditingController txtNamaLengkap = TextEditingController(),
+                        txtUserName = TextEditingController(),
+                        txtEmail = TextEditingController(),
+                        txtPassword= TextEditingController();
+
+  FocusNode focusNode = new FocusNode();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override 
+  Widget build(BuildContext context) {
     return Form(
       child: Column(
         children: [
-        buildUserName(),
-        SizedBox(height: getProportionateScreenHeight(30)),
-         buildPassword(),
-        SizedBox(height: getProportionateScreenHeight(30)),
-        Row(
-          children: [ 
-            Checkbox(
-            value: remeber, 
-            onChanged: (value){
-              setState(() {
-                remeber = value;
-              });
-            }),
-            Text("Tetap Masuk"),
-            Spacer(),
-            GestureDetector(
-              onTap: () {},
-              child: Text(
-                "Lupa Password",
-                style: TextStyle(decoration: TextDecoration.underline),
-              ),
-            )
-          ],
-        ),
-        DefaultButtonCustomeColor(
-          color: kPrimaryColor,
-          text: "Masuk",
-          press: (){},
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        GestureDetector(
-              onTap: () {
-              Navigator.pushNamed(context, RegisterScreen.routeName);
+          buildNamaLengkap(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildUserName(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildEmail(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildPassword(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          
+            DefaultButtonCustomeColor(
+              color: kSecondaryColor,
+              text: "Register",
+              press: () {
+                prosesRegistrasi(txtUserName.text, txtPassword.text, txtNamaLengkap.text, txtEmail.text);
               },
-              child: Text(
-                "Belum Punya Akun ? Daftar Disini",
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, LoginScreen.routeName);
+                },
+                child: Text("Sudah Punya Akun? Masuk Disini", 
                 style: TextStyle(decoration: TextDecoration.underline),
-              ),
-        )
-      ],
-      ),
+                ),
+              )
+        ],
+        ),
+      );
+  }
+  TextFormField buildNamaLengkap() {
+    return TextFormField(
+      controller: txtNamaLengkap,
+      keyboardType: TextInputType.text,
+      style: mTitleStyle,
+      decoration: InputDecoration(
+        labelText: 'Nama Lengkap',
+        hintText: 'Masukan Nama Lengkap',
+        labelStyle: TextStyle(
+          color: focusNode.hasFocus ? mSubtitleColor : kPrimaryColor),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon: CustomSurffixIcon(
+          svgIcon: "assets/icons/User.svg",
+      )),
+      );
+  }
+
+  TextFormField buildUserName() {
+    return TextFormField(
+      controller: txtUserName,
+      style: mTitleStyle,
+      decoration: InputDecoration(
+        labelText: 'Username',
+        hintText: 'Masukan Username',
+        labelStyle: TextStyle(
+          color: focusNode.hasFocus ? mSubtitleColor : kPrimaryColor),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon: CustomSurffixIcon(
+          svgIcon: "assets/icons/account.svg",
+      )),
     );
   }
-    TextFormField buildUserName(){
+
+  TextFormField buildEmail() {
     return TextFormField(
-      controller: txtUsserName,
+      controller: txtEmail,
       keyboardType: TextInputType.text,
       style: mTitleStyle,
       decoration: InputDecoration(
-         labelText: 'UserName',
-         hintText: 'Masukkan Ussername Anda',
-         labelStyle: TextStyle(
-          color:focusNode.hasFocus ? mSubtitleColor: kPrimaryColor),
+        labelText: 'Email',
+        hintText: 'Masukan Email',
+        labelStyle: TextStyle(
+          color: focusNode.hasFocus ? mSubtitleColor : kPrimaryColor),
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon:CustomSurffixIcon
-        (svgIcon: "assets/icons/User.svg")),
-          );
+        suffixIcon: CustomSurffixIcon(
+          svgIcon: "assets/icons/Mail.svg",
+      )),
+      );
   }
-   TextFormField buildPassword(){
+
+  TextFormField buildPassword() {
     return TextFormField(
       controller: txtPassword,
-      obscureText: true ,
+      obscureText: true,
       keyboardType: TextInputType.text,
       style: mTitleStyle,
       decoration: InputDecoration(
-         labelText: 'Password',
-         hintText: 'Masukkan Password Anda',
-         labelStyle: TextStyle(
-          color:focusNode.hasFocus ? mSubtitleColor: kPrimaryColor),
+        labelText: 'Password',
+        hintText: 'Masukan Password',
+        labelStyle: TextStyle(
+          color: focusNode.hasFocus ? mSubtitleColor : kPrimaryColor),
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon:CustomSurffixIcon(
-        svgIcon: "assets/icons/Lock.svg",
-        )),
-        );
+        suffixIcon: CustomSurffixIcon(
+          svgIcon: "assets/icons/Lock.svg",
+      )),
+      );
+  }
+
+  void prosesRegistrasi(username, password, nama, email) async{
+    utilsApps.showDialog(context);
+bool status; 
+var msg;
+var dataUserlogin;
+try{
+response = await dio.post(registrasiUrl, data: {
+      'username': username,
+      'password': password,
+      'nama': nama,
+      'email': email
+    });
+    status = response!.data['sukses'];
+    msg = response!.data['msg'];
+    
+setState(() {
+  if (status){
+      utilsApps.hideDialog(context);
+AwesomeDialog(
+            context: context,
+            dialogType: DialogType.SUCCES,
+            animType: AnimType.RIGHSLIDE,
+            title: 'PERINGATAN !!!',
+            desc: 'Berhasil Registrasi.............',
+            btnOkOnPress: () {
+              utilsApps.hideDialog(context);
+              print(dataUserlogin);
+             // Navigator.pushNamed(context,LoginScreen.routeName);
+            },
+            )..show();
+    }
+
+  else{
+    utilsApps.hideDialog(context);
+    AwesomeDialog(
+            context: context,
+            dialogType: DialogType.ERROR,
+            animType: AnimType.RIGHSLIDE,
+            title: 'PERINGATAN !!!',
+            desc: 'Gagal Registrasi $msg',
+            btnOkOnPress: () {},
+            btnOkColor: kColorRedSlow
+            )..show();
+  }
+});
+
+}catch(e){
+  setState(() {
+    utilsApps.hideDialog(context);
+  });
+  AwesomeDialog(
+            context: context,
+            dialogType: DialogType.ERROR,
+            animType: AnimType.RIGHSLIDE,
+            title: 'PERINGATAN !!!',
+            desc: 'Gagal Registrasi.............',
+            btnCancelOnPress: () {},
+            btnOkOnPress: () {},
+            )..show();
+}
+
+    
+    print(response!.data['msg']);
   }
 }

@@ -1,16 +1,15 @@
- import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toko_gitar_flutter/Screens/Login/LoginScreens.dart';
 import 'package:toko_gitar_flutter/routes.dart';
-import 'package:toko_gitar_flutter/screens/Login/LoginScreens.dart';
 import 'package:toko_gitar_flutter/theme.dart';
 
-void main() {
+void main() async {
   runApp(
     MaterialApp(
       title: "Toko Gitar Keren",
       theme: theme(),
-      initialRoute: LoginScreens.routeName,
+      initialRoute: LoginScreen.routeName,
       routes: routes,
-    ));
-  
+    )
+  );
 }
